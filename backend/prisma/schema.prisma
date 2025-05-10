@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int           @id @default(autoincrement())
+  username          String        @unique
+  passwordHash      String?       @map("password_hash")
+  role              String        // "admin", "manager", "user"
+  createdAt         DateTime      @default(now()) @map("created_at")
+  active            Boolean       @default(true)
+  
+  // Relations
+  createdSessions   CountSession[] @relation("CreatedBy")
+  countedItems      CountItem[]    @relation("CountedBy")
+  
+  @@map("users")
+}
+
+model Product {
+  id          Int           @id @default(autoincrement())
+  name        String
+  sku         String        @unique
+  unitType    String        @map("unit_type")
+  unitValue   Decimal       @map("unit_value")
+  description String?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  
+  // Relations
+  roomProducts RoomProduct[]
+  countItems   CountItem[]
+  
+  @@map("products")
+}
+
+model Room {
+  id          Int           @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  
+  // Relations
+  roomProducts RoomProduct[]
+  countItems   CountItem[]
+  
+  @@map("rooms")
+}
+
+model RoomProduct {
+  id           Int      @id @default(autoincrement())
+  roomId       Int      @map("room_id")
+  productId    Int      @map("product_id")
+  displayOrder Int      @map("display_order")
+  
+  // Relations
+  room         Room     @relation(fields: [roomId], references: [id])
+  product      Product  @relation(fields: [productId], references: [id])
+  
+  @@unique([roomId, productId])
+  @@map("room_products")
+}
+
+model CountSession {
+  id              Int       @id @default(autoincrement())
+  name            String
+  startTime       DateTime? @map("start_time")
+  endTime         DateTime? @map("end_time")
+  createdByUserId Int       @map("created_by_user_id")
+  status          String    // "draft", "in_progress", "completed", "finalized"
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  
+  // Relations
+  createdBy       User      @relation("CreatedBy", fields: [createdByUserId], references: [id])
+  countItems      CountItem[]
+  
+  @@map("count_sessions")
+}
+
+model CountItem {
+  id              Int       @id @default(autoincrement())
+  sessionId       Int       @map("session_id")
+  productId       Int       @map("product_id")
+  roomId          Int       @map("room_id")
+  quantity        Decimal
+  value           Decimal
+  countedByUserId Int       @map("counted_by_user_id")
+  countedAt       DateTime  @map("counted_at")
+  
+  // Relations
+  session         CountSession @relation(fields: [sessionId], references: [id])
+  product         Product      @relation(fields: [productId], references: [id])
+  room            Room         @relation(fields: [roomId], references: [id])
+  countedBy       User         @relation("CountedBy", fields: [countedByUserId], references: [id])
+  
+  @@unique([sessionId, productId, roomId])
+  @@map("count_items")
+}
