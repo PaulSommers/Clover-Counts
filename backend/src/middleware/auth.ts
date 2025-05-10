@@ -21,7 +21,7 @@ declare global {
  */
 export const authenticateJwt = async (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   try {
@@ -79,7 +79,7 @@ export const authenticateJwt = async (
  * Middleware to check if user has required role
  */
 export const authorize = (roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, _res: Response, next: NextFunction) => {
     if (!req.user) {
       return next(new UnauthorizedError('User not authenticated'));
     }
@@ -100,8 +100,8 @@ export const authorize = (roles: string[]) => {
  * Middleware to check if authentication mode is basic
  */
 export const requireBasicAuth = (
-  req: Request,
-  res: Response,
+  _req: Request,
+  _res: Response,
   next: NextFunction
 ) => {
   const authMode = process.env.AUTH_MODE;

@@ -348,7 +348,7 @@ services:
   backend:
     build: ./backend
     environment:
-      - DATABASE_URL=postgresql://clover:supersecret@db:5432/cloverdb
+      - DATABASE_URL=postgresql://clover:supersecret@db:5555/cloverdb
       - JWT_SECRET=your_jwt_secret_key
       - AUTH_MODE=basic
       - PORT=8080
@@ -367,7 +367,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5555:5432"
 
 volumes:
   db_data:

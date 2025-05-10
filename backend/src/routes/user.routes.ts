@@ -11,7 +11,7 @@ const router = express.Router();
  * @desc    Get all users
  * @access  Admin only
  */
-router.get('/', authorize(['admin']), async (req, res, next) => {
+router.get('/', authorize(['admin']), async (_req, res, next) => {
   try {
     const users = await prisma.user.findMany({
       select: {

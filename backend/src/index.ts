@@ -36,7 +36,7 @@ app.use('/api/rooms', authenticateJwt, roomRoutes);
 app.use('/api/count-sessions', authenticateJwt, countSessionRoutes);
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 

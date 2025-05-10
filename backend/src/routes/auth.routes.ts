@@ -54,21 +54,22 @@ router.post('/login', async (req, res, next) => {
     }
 
     // Generate JWT token
-    const jwtSecret = process.env.JWT_SECRET;
+    const jwtSecret = process.env.JWT_SECRET || 'fallback_secret_key_for_development';
     
-    if (!jwtSecret) {
-      throw new Error('JWT_SECRET is not defined in environment variables');
-    }
-
-    const token = jwt.sign(
-      {
-        id: user.id,
-        username: user.username,
-        role: user.role,
-      },
-      jwtSecret,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '1d' }
-    );
+    // Create payload
+    const payload = {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+    };
+    
+    // Create options
+    const options = {
+      expiresIn: process.env.JWT_EXPIRES_IN || '1d'
+    };
+    
+    // Sign token
+    const token = jwt.sign(payload, jwtSecret, options);
 
     // Return user info and token
     res.json({

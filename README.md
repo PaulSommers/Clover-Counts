@@ -54,7 +54,7 @@ Clover Counts is a web-based inventory management system designed for restaurant
 4. Access the application:
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:8080
-   - Database: PostgreSQL on port 5432
+   - Database: PostgreSQL on port 5555
 
 ### Development Setup
 
