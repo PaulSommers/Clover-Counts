@@ -15,34 +15,17 @@ Clover Counts is a PWA for restaurant/cafeteria inventory management focused on 
   - **User:** Counting only.
 - **Authentication Options:**
   - OAuth2/OpenID (SSO via CMS) — preferred, configurable.
-  - Basic Auth (username/password) — fallback, with hashed storage.
+  - Basic Auth (username/password) — fallback, with hashed storage. (Implement this first to get the project going)
 - **Modern UI, Reporting, PWA:** Clean, fast, and installable app for all devices.
 - **Simple deployment:** All-in-one Docker Compose stack.
 - **MCL-Inspired Design:** Following the theming and color conventions of MCL Homemade.
 
 ## Recommended Technology Stack
 
-### Frontend
-- **React**: A popular, well-supported library with a large ecosystem and excellent documentation
-- **TypeScript**: For type safety and better developer experience
-- **Redux Toolkit**: For state management
-- **React Router**: For navigation
-- **Material-UI**: For responsive UI components (customized to match MCL theming)
-- **Axios**: For API requests
-
-### Backend
-- **Node.js with Express**: Lightweight, flexible, and JavaScript-based (same language as frontend)
-- **TypeScript**: For type safety and better maintainability
-- **Passport.js**: For authentication strategies (supports both basic auth and OAuth/SSO)
-- **JWT**: For session management
-- **Prisma**: Type-safe ORM for database access
-
-### Database
-- **PostgreSQL**: Robust, open-source relational database with excellent support for JSON data
+- Utilize Your Recommended tech stack to make a light weight app with a modern and clean UI.
 
 ### Deployment
 - **Docker & Docker Compose**: For containerization and easy deployment
-- **Nginx**: As a reverse proxy for the frontend
 
 ## System Architecture
 
