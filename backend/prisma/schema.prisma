@@ -1,0 +1,129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  countSessions CountSession[] @relation("CreatedBy")
+  countItems    CountItem[]    @relation("CountedBy")
+
+  @@map("users")
+}
+
+// Product model
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  unit        String
+  unitValue   Float
+  category    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  roomProducts RoomProduct[] @relation("ProductToRoom")
+  countItems   CountItem[]   @relation("CountedProduct")
+
+  @@map("products")
+}
+
+// Room model
+model Room {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  roomProducts RoomProduct[] @relation("RoomToProduct")
+  countItems   CountItem[]   @relation("CountedRoom")
+
+  @@map("rooms")
+}
+
+// RoomProduct model (junction table for Room and Product)
+model RoomProduct {
+  id        String   @id @default(uuid())
+  roomId    String
+  productId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  room    Room    @relation("RoomToProduct", fields: [roomId], references: [id], onDelete: Cascade)
+  product Product @relation("ProductToRoom", fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, productId])
+  @@map("room_products")
+}
+
+// CountSession model
+model CountSession {
+  id          String     @id @default(uuid())
+  name        String
+  date        DateTime
+  status      CountStatus @default(IN_PROGRESS)
+  notes       String?
+  createdById String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  createdBy  User        @relation("CreatedBy", fields: [createdById], references: [id])
+  countItems CountItem[] @relation("SessionItems")
+
+  @@map("count_sessions")
+}
+
+// CountItem model
+model CountItem {
+  id            String   @id @default(uuid())
+  sessionId     String
+  roomId        String
+  productId     String
+  quantity      Float
+  countedById   String
+  countedAt     DateTime @default(now())
+  notes         String?
+
+  // Relations
+  session       CountSession @relation("SessionItems", fields: [sessionId], references: [id], onDelete: Cascade)
+  room          Room         @relation("CountedRoom", fields: [roomId], references: [id])
+  product       Product      @relation("CountedProduct", fields: [productId], references: [id])
+  countedBy     User         @relation("CountedBy", fields: [countedById], references: [id])
+
+  @@unique([sessionId, roomId, productId])
+  @@map("count_items")
+}
+
+// Enums
+enum Role {
+  ADMIN
+  MANAGER
+  USER
+}
+
+enum CountStatus {
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
